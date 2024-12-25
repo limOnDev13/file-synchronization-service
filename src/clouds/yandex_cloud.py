@@ -19,20 +19,22 @@ class YandexCloud(Cloud):
         self.base_url = "https://cloud-api.yandex.net/v1/disk/resources/upload"
         self.headers = {"Authorization": f"OAuth {token}"}
 
-    def load(self, path, overwrite: bool = False):
-        logger.info("Start uploading a file to yandex disk")
-
+    def _query_params(self, path, kwargs: Dict[str, int | str]) -> str:
         filename = os.path.basename(path)
         logger.debug("Filename is %s", filename)
         remote_path = os.path.join(self.remote_dir_path, filename)
         logger.debug("Remote path is %s", remote_path)
         remote_path = pathname2url(remote_path)
-        args: str = "path={remote_path}&overwrite={overwrite}".format(
-            remote_path=remote_path,
-            overwrite="true" if overwrite else "false",
-        )
 
-        url = "?".join((self.base_url, args))
+        return "&".join((f"path={remote_path}", (f"{key}={value}" for key, value in kwargs.items())))
+
+    def load(self, path, overwrite: bool = False):
+        logger.info("Start uploading a file to yandex disk")
+
+        url = "?".join((
+            self.base_url,
+            self._query_params(path, {"overwrite": "true" if overwrite else "false"}),
+        ))
         logger.debug("Getting href to uploading file...")
         response: Response = requests.get(
             url,
@@ -64,7 +66,21 @@ class YandexCloud(Cloud):
         self.load(path, overwrite=True)
 
     def delete(self, filename):
-        pass
+        logger.info("Start deleting the file from yandex disk")
+
+        url = "?".join((
+            self.base_url,
+            self._query_params(filename, {"permanently": "true"}),
+        ))
+        response: Response = requests.delete(
+            url,
+            headers=self.headers
+        )
+        if response.status_code != 204:
+            logger.error("Status code is %d (must be 204)."
+                         " Response body:\n%s", response.status_code, str(response.json()))
+            raise ValueError("Status code is not 204")
+        logger.debug("Done")
 
     def get_info(self):
         pass
