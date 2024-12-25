@@ -16,34 +16,24 @@ class YandexCloud(Cloud):
 
     def __init__(self, token: str, remote_dir_path: str):
         super().__init__(token, remote_dir_path)
-        self.base_url = "https://cloud-api.yandex.net/v1/disk/resources/upload"
         self.headers = {"Authorization": f"OAuth {token}"}
 
-    def _query_params(self, path, is_dir: bool = False, kwargs: Optional[Dict[str, int | str]] = None) -> str:
-        if is_dir:
-            remote_path = self.remote_dir_path
-        else:
-            filename = os.path.basename(path)
-            logger.debug("Filename is %s", filename)
-            remote_path = os.path.join(self.remote_dir_path, filename)
-
-        logger.debug("Remote path is %s", remote_path)
-        remote_path = pathname2url(remote_path)
-
-        if kwargs is not None:
-            return "&".join((
-                f"path={remote_path}",
-                *(f"{key}={value}" for key, value in kwargs.items())
-            ))
-        else:
-            return f"path={remote_path}"
+    @classmethod
+    def _query_params(cls, kwargs: Dict[str, int | str]) -> str:
+        return "&".join((f"{key}={value}" for key, value in kwargs.items()))
 
     def load(self, path, overwrite: bool = False):
         logger.info("Start uploading a file to yandex disk")
 
+        filename: str = os.path.basename(path)
+        base_url: str = "https://cloud-api.yandex.net/v1/disk/resources/upload"
+
         url = "?".join((
-            self.base_url,
-            self._query_params(path, {"overwrite": "true" if overwrite else "false"}),
+            base_url,
+            self._query_params({
+                "path": pathname2url(os.path.join(self.remote_dir_path, filename)),
+                "overwrite": "true" if overwrite else "false"
+            }),
         ))
         logger.debug("Getting href to uploading file...")
         response: Response = requests.get(
@@ -78,9 +68,14 @@ class YandexCloud(Cloud):
     def delete(self, filename):
         logger.info("Start deleting the file from yandex disk")
 
+        base_url: str = "https://cloud-api.yandex.net/v1/disk/resources"
+
         url = "?".join((
-            self.base_url,
-            self._query_params(filename, {"permanently": "true"}),
+            base_url,
+            self._query_params({
+                "path": pathname2url(os.path.join(self.remote_dir_path, filename)),
+                "permanently": "true",
+            }),
         ))
         response: Response = requests.delete(
             url,
@@ -97,10 +92,15 @@ class YandexCloud(Cloud):
         items: List[Dict[str, Any]] = list()
         limit: int = 20
         offset: int = 0
+        base_url: str = "https://cloud-api.yandex.net/v1/disk/resources"
 
         url = "?".join((
-            "https://cloud-api.yandex.net/v1/disk/resources",
-            self._query_params(self.remote_dir_path, is_dir=True, kwargs={"limit": limit, "offset": offset}),
+            base_url,
+            self._query_params({
+                "path": pathname2url(self.remote_dir_path),
+                "limit": limit,
+                "offset": offset,
+            }),
         ))
         response: Response = requests.get(
             url,
@@ -121,8 +121,12 @@ class YandexCloud(Cloud):
             limit = data_json["total"]
 
             url = "?".join((
-                "https://cloud-api.yandex.net/v1/disk/resources",
-                self._query_params(self.remote_dir_path, is_dir=True, kwargs={"limit": limit, "offset": offset}),
+                base_url,
+                self._query_params({
+                    "path": pathname2url(self.remote_dir_path),
+                    "limit": limit,
+                    "offset": offset,
+                }),
             ))
             response: Response = requests.get(
                 url,
