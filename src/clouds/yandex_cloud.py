@@ -27,7 +27,7 @@ class YandexCloud(Cloud):
 
     def load(self, path, overwrite: bool = False):
         """Upload the file to the storage."""
-        logger.info("Start uploading a file to yandex disk")
+        logger.debug("Start uploading a file to yandex disk\npath=%s", path)
 
         filename: str = os.path.basename(path)
         base_url: str = "https://cloud-api.yandex.net/v1/disk/resources/upload"
@@ -51,8 +51,9 @@ class YandexCloud(Cloud):
         data_dict = response.json()
         if response.status_code != 200:
             logger.error(
-                "Status code is %d (must be 200)." " Response body:\n%s",
+                "Status code is %d (must be 200).\npath=%s\nResponse body:\n%s",
                 response.status_code,
+                path,
                 str(data_dict),
             )
             raise ValueError("Status code is not 200")
@@ -64,8 +65,9 @@ class YandexCloud(Cloud):
         if response.status_code != 201 and response.status_code != 202:
             logger.error(
                 "The download link was received, but the download failed.\n"
-                "Status code - %d (must be 201 or 202). Response body:\n%s",
+                "Status code - %d (must be 201 or 202).\npath=%s\nResponse body:\n%s",
                 response.status_code,
+                path,
                 str(response.json()),
             )
             raise ValueError("The download link was received, but the download failed.")
@@ -77,7 +79,7 @@ class YandexCloud(Cloud):
 
     def delete(self, filename):
         """Delete the file from the storage."""
-        logger.info("Start deleting the file from yandex disk")
+        logger.debug("Start deleting the file from yandex disk\nfilename=%s", filename)
 
         base_url: str = "https://cloud-api.yandex.net/v1/disk/resources"
 
@@ -97,8 +99,9 @@ class YandexCloud(Cloud):
         response: Response = requests.delete(url, headers=self.headers)
         if response.status_code != 204:
             logger.error(
-                "Status code is %d (must be 204)." " Response body:\n%s",
+                "Status code is %d (must be 204).\nfilename=%s\nResponse body:\n%s",
                 response.status_code,
+                filename,
                 str(response.json()),
             )
             raise ValueError("Status code is not 204")
@@ -106,7 +109,7 @@ class YandexCloud(Cloud):
 
     def get_info(self) -> List[Dict[str, Any]]:
         """Get info about files stored in remote storage."""
-        logger.info("Start getting info about remote dir.")
+        logger.debug("Start getting info about remote dir.")
         items: List[Dict[str, Any]] = list()
         limit: int = 20
         offset: int = 0
@@ -127,7 +130,7 @@ class YandexCloud(Cloud):
         response: Response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
             logger.error(
-                "Status code is %d (must be 200)." " Response body:\n%s",
+                "Status code is %d (must be 200).\nResponse body:\n%s",
                 response.status_code,
                 str(response.json()),
             )
@@ -160,7 +163,7 @@ class YandexCloud(Cloud):
             response = requests.get(url, headers=self.headers)
             if response.status_code != 200:
                 logger.error(
-                    "Status code is %d (must be 200)." " Response body:\n%s",
+                    "Status code is %d (must be 200).\nResponse body:\n%s",
                     response.status_code,
                     str(response.json()),
                 )
