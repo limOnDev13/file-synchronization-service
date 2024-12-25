@@ -9,7 +9,7 @@ log_config: Dict[str, Any] = {
             "format": "[%(asctime)s] %(message)s",
         },
         "console": {
-            "format": "[%(levelname)s] [%[asctime]s] %(module)s.%(funcName)s - %(message)s",
+            "format": "[%(levelname)s] [%(asctime)s] %(module)s.%(funcName)s | %(message)s",
         },
     },
     "handlers": {
@@ -18,10 +18,10 @@ log_config: Dict[str, Any] = {
             "level": "INFO",
             "formatter": "file",
             "filename": "logfile.log",
-            "mode": "a",
             "backupCount": 3,
             "when": "d",
             "interval": 10,
+            "encoding": "utf-8",
         },
         "console": {
             "class": "logging.StreamHandler",
