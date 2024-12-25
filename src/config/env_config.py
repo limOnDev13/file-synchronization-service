@@ -15,3 +15,4 @@ class Config(object):
     token: str = os.getenv("TOKEN", "")
     target: str = os.getenv("TARGET", "")
     remote_dir_path: str = os.getenv("REMOTE_DIR_PATH", "")
+    delay: int = int(os.getenv("DELAY", 60))
