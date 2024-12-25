@@ -1,5 +1,6 @@
-from typing import Dict, Any
+"""A module with a logging configuration."""
 
+from typing import Any, Dict
 
 log_config: Dict[str, Any] = {
     "version": 1,
@@ -9,7 +10,8 @@ log_config: Dict[str, Any] = {
             "format": "[%(asctime)s] %(message)s",
         },
         "console": {
-            "format": "[%(levelname)s] [%(asctime)s] %(module)s.%(funcName)s | %(message)s",
+            "format": "[%(levelname)s] [%(asctime)s]"
+            " %(module)s.%(funcName)s | %(message)s",
         },
     },
     "handlers": {

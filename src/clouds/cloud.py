@@ -1,7 +1,17 @@
+"""A module containing abstractions for working with cloud disks."""
+
 from abc import ABC, abstractmethod
 
 
 class Cloud(ABC):
+    """
+    An abstract class for working with the cloud disk API.
+
+    Args:
+        token (str) - Authorization token;
+        remote_dir_path (str) - The path to the target folder in the cloud;
+    """
+
     def __init__(self, token: str, remote_dir_path: str):
         self.token = token
         self.remote_dir_path = remote_dir_path
