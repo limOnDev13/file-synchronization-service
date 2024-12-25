@@ -35,4 +35,6 @@ pytest:
     stage: test
     script:
         - pytest .
+    variables:
+        TOKEN: $TOKEN
 
