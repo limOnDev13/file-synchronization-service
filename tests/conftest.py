@@ -1,13 +1,14 @@
 """A module with test fixtures."""
+
 import os
 import random
-from typing import List, Tuple
+from typing import Iterator, List, Tuple
 
 import pytest
 
 
 @pytest.fixture()
-def not_empty_dir() -> Tuple[str, List[str]]:
+def not_empty_dir() -> Iterator[Tuple[str, List[str]]]:
     """Fixture for getting paths to a directory and files inside it."""
     dir_name: str = "not_empty_dir"
     dir_path: str = os.path.join(os.path.abspath(""), dir_name)
@@ -30,7 +31,7 @@ def not_empty_dir() -> Tuple[str, List[str]]:
 
 
 @pytest.fixture()
-def empty_dir() -> str:
+def empty_dir() -> Iterator[str]:
     """Fixture for getting path to an empty directory."""
     dir_name: str = "empty_dir"
     dir_path: str = os.path.join(os.path.abspath(""), dir_name)
