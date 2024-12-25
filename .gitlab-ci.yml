@@ -37,4 +37,5 @@ pytest:
         - pytest .
     variables:
         TOKEN: $TOKEN
+        TARGET: $TARGET
 
