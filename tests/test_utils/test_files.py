@@ -14,7 +14,7 @@ def test_search_files(not_empty_dir: Tuple[str, List[str]]) -> None:
     """Test the search_files function on an existing directory with files."""
     dir_path, file_paths = not_empty_dir
 
-    for file, found_file in zip(file_paths, search_files(dir_path)):
+    for file, found_file in zip(sorted(file_paths), sorted(search_files(dir_path))):
         assert file == found_file
     assert len(file_paths) == len(list(search_files(dir_path)))
 
