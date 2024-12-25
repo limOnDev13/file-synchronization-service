@@ -7,6 +7,7 @@ import pytest
 
 @pytest.fixture()
 def not_empty_dir() -> Tuple[str, List[str]]:
+    """Fixture for getting paths to a directory and files inside it."""
     dir_name: str = "not_empty_dir"
     dir_path: str = os.path.join(os.path.abspath(""), dir_name)
     if not os.path.exists(dir_path):
@@ -24,4 +25,17 @@ def not_empty_dir() -> Tuple[str, List[str]]:
 
     for file_path in files:
         os.remove(file_path)
+    os.rmdir(dir_path)
+
+
+@pytest.fixture()
+def empty_dir() -> str:
+    """Fixture for getting path to an empty directory."""
+    dir_name: str = "empty_dir"
+    dir_path: str = os.path.join(os.path.abspath(""), dir_name)
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+
+    yield dir_path
+
     os.rmdir(dir_path)
