@@ -1,7 +1,9 @@
+"""Tests for src.utils.files.py."""
+
 import os.path
-from typing import Tuple, List
 import random
 from string import ascii_letters
+from typing import List, Tuple
 
 import pytest
 
@@ -27,8 +29,10 @@ def test_search_files_in_not_existing_dir() -> None:
     random_dir_name = "".join(random.choices(ascii_letters, k=random.randint(5, 10)))
     dir_path: str = os.path.join(os.path.abspath("."), random_dir_name)
     while os.path.exists(dir_path):
-        random_dir_name = "".join(random.choices(ascii_letters, k=random.randint(5, 10)))
-        dir_path: str = os.path.join(os.path.abspath("."), random_dir_name)
+        random_dir_name = "".join(
+            random.choices(ascii_letters, k=random.randint(5, 10))
+        )
+        dir_path = os.path.join(os.path.abspath("."), random_dir_name)
 
     with pytest.raises(FileNotFoundError):
         list(search_files(dir_path))
