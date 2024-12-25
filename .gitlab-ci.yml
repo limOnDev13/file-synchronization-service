@@ -1,0 +1,41 @@
+workflow:
+    rules:
+        - if: ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME  == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME  == "develop") && $CI_PIPELINE_SOURCE == "merge_request_event"
+
+image: python:3.12
+
+stages:
+    - linters
+    - test
+
+before_script:
+    - pip install -r requirements_dev.txt
+
+black:
+    stage: linters
+    script:
+        - python3 -m black --diff --check .
+
+isort:
+    stage: linters
+    script:
+        - python3 -m isort --check-only --diff .
+
+flake8:
+    stage: linters
+    script:
+        - python3 -m flake8 .
+
+mypy:
+    stage: linters
+    script:
+        - python3 -m mypy .
+
+pytest:
+    stage: test
+    script:
+        - pytest .
+    variables:
+        TOKEN: $TOKEN
+        TARGET: $TARGET
+
