@@ -26,7 +26,7 @@ class YandexCloud(Cloud):
         logger.debug("Remote path is %s", remote_path)
         remote_path = pathname2url(remote_path)
 
-        return "&".join((f"path={remote_path}", (f"{key}={value}" for key, value in kwargs.items())))
+        return "&".join((f"path={remote_path}", *(f"{key}={value}" for key, value in kwargs.items())))
 
     def load(self, path, overwrite: bool = False):
         logger.info("Start uploading a file to yandex disk")
