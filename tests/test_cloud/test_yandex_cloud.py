@@ -1,4 +1,5 @@
 """Module with tests for YandexCloud."""
+
 import os.path
 import random
 from string import ascii_letters
