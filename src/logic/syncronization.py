@@ -23,6 +23,7 @@ def synchronize(cloud: Cloud, init_dir: str) -> None:
     logger.debug("Updating files...")
     threads: List[Thread] = list()
     for file_path in local_files:
+        logger.debug("file path = %s", file_path)
         t: Thread = Thread(target=cloud.reload, args=(file_path,))
         threads.append(t)
         t.start()
