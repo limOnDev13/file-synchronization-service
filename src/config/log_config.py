@@ -1,4 +1,5 @@
 """A module with a logging configuration."""
+
 import os
 from typing import Any, Dict
 
