@@ -1,6 +1,12 @@
 """A module with a logging configuration."""
 
+import os
 from typing import Any, Dict
+
+from dotenv import load_dotenv
+
+load_dotenv()
+CONSOLE_LOGLEVEL = os.getenv("CONSOLE_LOGLEVEL", "info").upper()
 
 log_config: Dict[str, Any] = {
     "version": 1,
@@ -27,7 +33,7 @@ log_config: Dict[str, Any] = {
         },
         "console": {
             "class": "logging.StreamHandler",
-            "level": "DEBUG",
+            "level": CONSOLE_LOGLEVEL,
             "formatter": "console",
         },
     },
