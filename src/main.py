@@ -2,6 +2,7 @@
 
 import logging.config
 import time
+from datetime import timedelta
 from logging import getLogger
 
 from clouds.cloud import Cloud
@@ -25,7 +26,14 @@ def main():
 
     while True:
         synchronize(cloud=cloud, init_dir=config.target)
-        time.sleep(config.delay)
+        during: timedelta = timedelta(
+            days=config.delay.days,
+            hours=config.delay.hours,
+            minutes=config.delay.minutes,
+            seconds=config.delay.seconds,
+        )
+        logger.debug("Fall asleep on %d seconds", during.seconds)
+        time.sleep(during.seconds)
 
 
 if __name__ == "__main__":
